@@ -24,15 +24,18 @@ export class WizardState {
       return;
     }
     this.currentSlideIndex.set(this.currentSlideIndex() + 1);
+    this.currentSlide = this.getCurrentSlide();
   }
   handlePreviousSlide() {
     if (this.isFirstSlide()) {
       return;
     }
     this.currentSlideIndex.set(this.currentSlideIndex() - 1);
+    this.currentSlide = this.getCurrentSlide();
   }
   lastSlideIndex = () => this.currentRecipe().slides.length - 1;
   getCurrentSlide(): Slide {
     return this.currentRecipe().slides[this.currentSlideIndex()];
   }
+  currentSlide: Slide = this.getCurrentSlide();
 }

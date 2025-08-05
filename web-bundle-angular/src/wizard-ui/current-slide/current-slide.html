@@ -15,10 +15,6 @@
   </div>
 }
 <main id="slide-content">
-  {{ wizardState.getCurrentSlide().markdown }}
+  <wizard-slide-instructions> </wizard-slide-instructions>
 </main>
-<div id="slide-count">
-  {{ wizardState.currentSlideIndex() + 1 }}/{{
-    wizardState.lastSlideIndex() + 1
-  }}
-</div>
+<div id="slide-count"></div>

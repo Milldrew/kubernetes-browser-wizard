@@ -1,0 +1,22 @@
+<div class="slide-instructions" *ngIf="wizardState.currentSlide">
+  <div class="command-section">
+    <div class="command-header">
+      <h3>Command</h3>
+      <button
+        class="copy-button"
+        (click)="copyCommand()"
+        [class.copied]="copyButtonText === 'Copied!'"
+      >
+        {{ copyButtonText }}
+      </button>
+    </div>
+    <div class="command-block">
+      <code>{{ wizardState.currentSlide.command }}</code>
+    </div>
+  </div>
+
+  <div class="explanation-section">
+    <h3>Explanation</h3>
+    <p>{{ wizardState.currentSlide.explanation }}</p>
+  </div>
+</div>
