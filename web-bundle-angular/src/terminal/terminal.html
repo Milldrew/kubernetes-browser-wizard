@@ -1,1 +1,7 @@
-<p>terminal works!</p>
+<div class="terminal-wrapper">
+  <div class="font-size-controls">
+    <button (click)="increaseFontSize()" title="Increase font size">↑</button>
+    <button (click)="decreaseFontSize()" title="Decrease font size">↓</button>
+  </div>
+  <div #terminalContainer class="terminal-container"></div>
+</div>
