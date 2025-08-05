@@ -43,7 +43,7 @@ export class Terminal implements AfterViewInit, OnDestroy {
     this.terminal.open(this.terminalContainer.nativeElement);
 
     // Connect to WebSocket server
-    this.socket = io('http://96.19.42.234:3453');
+    this.socket = io('http://localhost:3000');
 
     // Handle WebSocket connection
     this.socket.on('connect', () => {
