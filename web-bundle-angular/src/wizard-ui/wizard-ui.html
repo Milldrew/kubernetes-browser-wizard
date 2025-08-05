@@ -1,0 +1,14 @@
+<header></header>
+<h4>Basic mat-select with initial value</h4>
+<mat-form-field>
+  <mat-label>Recipes</mat-label>
+  <mat-select [(value)]="selectedFood">
+    <mat-option></mat-option>
+    @for (option of wizardState.recipes(); track option) {
+      <mat-option [value]="option.recipeTitle">{{
+        option.recipeTitle
+      }}</mat-option>
+    }
+  </mat-select>
+</mat-form-field>
+<wizard-current-slide></wizard-current-slide>
