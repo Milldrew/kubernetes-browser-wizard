@@ -1,8 +1,6 @@
 @if (!wizardState.isFirstSlide()) {
   <div id="back-button">
-    <button mat-raised-button (click)="wizardState.handlePreviousSlide()"
-
-    >
+    <button mat-raised-button (click)="wizardState.handlePreviousSlide()">
       <mat-icon>navigate_before</mat-icon>
       <span>Back</span>
     </button>
@@ -16,6 +14,11 @@
     </button>
   </div>
 }
-{{wizardState.getCurrentSlide().markdown }}
-
-<div id="slide-count">{{wizardState.currentSlideIndex() + 1}}/{{wizardState.lastSlideIndex() + 1}}</div>
+<main id="slide-content">
+  {{ wizardState.getCurrentSlide().markdown }}
+</main>
+<div id="slide-count">
+  {{ wizardState.currentSlideIndex() + 1 }}/{{
+    wizardState.lastSlideIndex() + 1
+  }}
+</div>
