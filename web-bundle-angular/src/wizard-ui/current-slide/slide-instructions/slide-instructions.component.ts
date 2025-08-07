@@ -1,13 +1,13 @@
 import { Component } from '@angular/core';
-import { WizardState } from '../../wizard-state';
+import { WizardState } from '../../wizard-state.service';
 import { Slide } from '../../wizard-ui.constants';
 import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'wizard-slide-instructions',
   imports: [CommonModule],
-  templateUrl: './slide-instructions.html',
-  styleUrl: './slide-instructions.scss',
+  templateUrl: './slide-instructions.component.html',
+  styleUrl: './slide-instructions.component.scss',
 })
 export class SlideInstructions {
   constructor(public wizardState: WizardState) {}

@@ -11,8 +11,8 @@ import 'xterm/css/xterm.css';
 
 @Component({
   selector: 'wizard-terminal',
-  templateUrl: './terminal.html',
-  styleUrls: ['./terminal.scss'],
+  templateUrl: './terminal.component.html',
+  styleUrls: ['./terminal.component.scss'],
 })
 export class Terminal implements AfterViewInit, OnDestroy {
   @ViewChild('terminalContainer', { static: false })
