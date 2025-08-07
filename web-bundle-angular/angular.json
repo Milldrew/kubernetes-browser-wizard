@@ -6,7 +6,10 @@
     "web-bundle-angular": {
       "projectType": "application",
       "schematics": {
-        "@schematics/angular:component": { "type": "component" , "style": "scss"},
+        "@schematics/angular:component": {
+          "type": "component",
+          "style": "scss"
+        },
         "@schematics/angular:directive": { "type": "directive" },
         "@schematics/angular:service": { "type": "service" },
         "@schematics/angular:guard": { "typeSeparator": "." },
@@ -14,6 +17,7 @@
         "@schematics/angular:module": { "typeSeparator": "." },
         "@schematics/angular:pipe": { "typeSeparator": "." },
         "@schematics/angular:resolver": { "typeSeparator": "." }
+      },
       "root": "",
       "sourceRoot": "src",
       "prefix": "wizard",
