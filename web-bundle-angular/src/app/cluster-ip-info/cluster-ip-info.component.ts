@@ -1,14 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
-interface ClusterNode {
-  id: string;
-  ipAddress: string;
-  nodeType: 'worker' | 'control-plane';
-  nickname?: string;
-  isEditing?: boolean;
-}
+import { Subscription } from 'rxjs';
+import { CoreStateService, ClusterNode } from '../../core-state.service';
 
 @Component({
   selector: 'wizard-cluster-ip-info',
@@ -16,47 +10,57 @@ interface ClusterNode {
   templateUrl: './cluster-ip-info.component.html',
   styleUrl: './cluster-ip-info.component.scss',
 })
-export class ClusterIpInfoComponent implements OnInit {
+export class ClusterIpInfoComponent implements OnInit, OnDestroy {
   nodes: ClusterNode[] = [];
-  newNode: ClusterNode = { id: '', ipAddress: '', nodeType: 'worker', nickname: '' };
-  private readonly STORAGE_KEY = 'cluster-nodes';
+  newNode: Partial<ClusterNode> = { ipAddress: '', nodeType: 'worker', nickname: '' };
+  private subscription: Subscription = new Subscription();
+
+  constructor(private coreStateService: CoreStateService) {}
 
   ngOnInit() {
-    this.loadNodesFromStorage();
+    this.subscription.add(
+      this.coreStateService.clusterNodes$.subscribe(nodes => {
+        this.nodes = nodes;
+      })
+    );
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 
   addNode() {
-    if (this.newNode.ipAddress.trim()) {
-      const node: ClusterNode = {
-        id: this.generateId(),
+    if (this.newNode.ipAddress?.trim()) {
+      this.coreStateService.addClusterNode({
         ipAddress: this.newNode.ipAddress.trim(),
-        nodeType: this.newNode.nodeType,
+        nodeType: this.newNode.nodeType || 'worker',
         nickname: this.newNode.nickname?.trim() || '',
-      };
-      this.nodes.push(node);
-      this.saveNodesToStorage();
-      this.newNode = { id: '', ipAddress: '', nodeType: 'worker', nickname: '' };
+      });
+      this.newNode = { ipAddress: '', nodeType: 'worker', nickname: '' };
     }
   }
 
   editNode(node: ClusterNode) {
-    node.isEditing = true;
+    this.coreStateService.updateClusterNode(node.id, { isEditing: true });
   }
 
   saveNode(node: ClusterNode) {
     if (node.ipAddress.trim()) {
-      node.isEditing = false;
-      this.saveNodesToStorage();
+      this.coreStateService.updateClusterNode(node.id, { 
+        ipAddress: node.ipAddress.trim(),
+        nodeType: node.nodeType,
+        nickname: node.nickname?.trim() || '',
+        isEditing: false 
+      });
     }
   }
 
   cancelEdit(node: ClusterNode) {
-    node.isEditing = false;
+    this.coreStateService.updateClusterNode(node.id, { isEditing: false });
   }
 
   deleteNode(nodeId: string) {
-    this.nodes = this.nodes.filter((node) => node.id !== nodeId);
-    this.saveNodesToStorage();
+    this.coreStateService.deleteClusterNode(nodeId);
   }
 
   copyToClipboard(text: string, event: Event) {
@@ -103,29 +107,5 @@ export class ClusterIpInfoComponent implements OnInit {
       element.textContent = originalText;
       element.style.color = '';
     }, 1000);
-  }
-
-  private saveNodesToStorage() {
-    try {
-      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.nodes));
-    } catch (error) {
-      console.error('Error saving to localStorage:', error);
-    }
-  }
-
-  private loadNodesFromStorage() {
-    try {
-      const storedNodes = localStorage.getItem(this.STORAGE_KEY);
-      if (storedNodes) {
-        this.nodes = JSON.parse(storedNodes);
-      }
-    } catch (error) {
-      console.error('Error loading from localStorage:', error);
-      this.nodes = [];
-    }
-  }
-
-  private generateId(): string {
-    return Date.now().toString() + Math.random().toString(36).substr(2, 9);
   }
 }
