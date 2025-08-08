@@ -7,6 +7,9 @@ export interface ClusterNode {
   nodeType: 'worker' | 'control-plane';
   nickname?: string;
   isEditing?: boolean;
+  isConfigured?: boolean;
+  username?: string;
+  password?: string;
 }
 
 @Injectable({

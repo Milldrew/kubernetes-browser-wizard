@@ -29,6 +29,34 @@
         <option value="control-plane">Control Plane Node</option>
       </select>
 
+      <label for="username">SSH Username:</label>
+      <input
+        id="username"
+        type="text"
+        [(ngModel)]="newNode.username"
+        placeholder="e.g., ubuntu, root"
+        class="username-input"
+      />
+
+      <label for="password">SSH Password:</label>
+      <input
+        id="password"
+        type="password"
+        [(ngModel)]="newNode.password"
+        placeholder="SSH password"
+        class="password-input"
+      />
+
+      <label for="isConfigured" class="checkbox-label">
+        <input
+          id="isConfigured"
+          type="checkbox"
+          [(ngModel)]="newNode.isConfigured"
+          class="configured-checkbox"
+        />
+        Is Configured
+      </label>
+
       <button (click)="addNode()" class="add-button">Add Node</button>
     </div>
   </div>
@@ -43,6 +71,10 @@
             <th>Nickname</th>
             <th>IP Address</th>
             <th>Node Type</th>
+            <th>Username</th>
+            <th>Password</th>
+            <th>Configured</th>
+            <th>SSH Command</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -93,6 +125,60 @@
                   <span class="node-type" [class.worker]="node.nodeType === 'worker'" [class.control-plane]="node.nodeType === 'control-plane'">
                     {{ node.nodeType === 'worker' ? 'Worker Node' : 'Control Plane Node' }}
                   </span>
+                }
+              </td>
+              <td>
+                @if (node.isEditing) {
+                  <input
+                    type="text"
+                    [(ngModel)]="node.username"
+                    class="edit-input"
+                    placeholder="Username"
+                  />
+                } @else {
+                  <span class="node-username">
+                    {{ node.username || '-' }}
+                  </span>
+                }
+              </td>
+              <td>
+                @if (node.isEditing) {
+                  <input
+                    type="password"
+                    [(ngModel)]="node.password"
+                    class="edit-input"
+                    placeholder="Password"
+                  />
+                } @else {
+                  <span class="node-password">
+                    {{ node.password ? '••••••••' : '-' }}
+                  </span>
+                }
+              </td>
+              <td>
+                @if (node.isEditing) {
+                  <input
+                    type="checkbox"
+                    [(ngModel)]="node.isConfigured"
+                    class="edit-checkbox"
+                  />
+                } @else {
+                  <span class="configured-status" [class.configured]="node.isConfigured">
+                    {{ node.isConfigured ? '✓' : '✗' }}
+                  </span>
+                }
+              </td>
+              <td>
+                @if (!node.isEditing && generateSshCommand(node)) {
+                  <span 
+                    class="copyable-ip" 
+                    (click)="copyToClipboard(generateSshCommand(node), $event)"
+                    title="Click to copy SSH command"
+                  >
+                    {{ generateSshCommand(node) }}
+                  </span>
+                } @else {
+                  <span class="no-ssh">-</span>
                 }
               </td>
               <td class="actions">

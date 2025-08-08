@@ -12,7 +12,7 @@ import { CoreStateService, ClusterNode } from '../../core-state.service';
 })
 export class ClusterIpInfoComponent implements OnInit, OnDestroy {
   nodes: ClusterNode[] = [];
-  newNode: Partial<ClusterNode> = { ipAddress: '', nodeType: 'worker', nickname: '' };
+  newNode: Partial<ClusterNode> = { ipAddress: '', nodeType: 'worker', nickname: '', username: '', password: '', isConfigured: false };
   private subscription: Subscription = new Subscription();
 
   constructor(private coreStateService: CoreStateService) {}
@@ -35,8 +35,11 @@ export class ClusterIpInfoComponent implements OnInit, OnDestroy {
         ipAddress: this.newNode.ipAddress.trim(),
         nodeType: this.newNode.nodeType || 'worker',
         nickname: this.newNode.nickname?.trim() || '',
+        username: this.newNode.username?.trim() || '',
+        password: this.newNode.password?.trim() || '',
+        isConfigured: this.newNode.isConfigured || false,
       });
-      this.newNode = { ipAddress: '', nodeType: 'worker', nickname: '' };
+      this.newNode = { ipAddress: '', nodeType: 'worker', nickname: '', username: '', password: '', isConfigured: false };
     }
   }
 
@@ -50,6 +53,9 @@ export class ClusterIpInfoComponent implements OnInit, OnDestroy {
         ipAddress: node.ipAddress.trim(),
         nodeType: node.nodeType,
         nickname: node.nickname?.trim() || '',
+        username: node.username?.trim() || '',
+        password: node.password?.trim() || '',
+        isConfigured: node.isConfigured || false,
         isEditing: false 
       });
     }
@@ -61,6 +67,17 @@ export class ClusterIpInfoComponent implements OnInit, OnDestroy {
 
   deleteNode(nodeId: string) {
     this.coreStateService.deleteClusterNode(nodeId);
+  }
+
+  generateSshCommand(node: ClusterNode): string {
+    if (node.ipAddress) {
+      if (node.username) {
+        return `ssh ${node.username}@${node.ipAddress}`;
+      } else {
+        return `ssh ${node.ipAddress}`;
+      }
+    }
+    return '';
   }
 
   copyToClipboard(text: string, event: Event) {
