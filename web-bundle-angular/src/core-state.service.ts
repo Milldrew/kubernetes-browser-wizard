@@ -9,4 +9,7 @@ export class CoreStateService {
   showClusterIpInfo = false;
   showWizardAndTerminal = false;
   hasClusterIpInfo = false;
+  showTerminal() {
+    this.showWizardAndTerminal = true;;
+  }
 }
