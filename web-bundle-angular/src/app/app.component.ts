@@ -6,6 +6,7 @@ import { Terminal } from '../terminal/terminal.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { CoreStateService } from '../core-state.service';
+import { ClusterIpInfoComponent } from './cluster-ip-info/cluster-ip-info.component';
 @Component({
   selector: 'app-root',
   imports: [
@@ -14,6 +15,7 @@ import { CoreStateService } from '../core-state.service';
     Terminal,
     MatButtonModule,
     MatIconModule,
+    ClusterIpInfoComponent,
     Header,
   ],
   templateUrl: './app.component.html',

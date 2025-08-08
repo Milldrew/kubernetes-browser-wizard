@@ -1,1 +1,91 @@
-<p>cluster-ip-info works!</p>
+<div class="cluster-ip-info">
+  <h2>Cluster Node Information</h2>
+
+  <!-- Add New Node Form -->
+  <div class="add-node-form">
+    <h3>Add New Node</h3>
+    <div class="form-row">
+      <label for="ipAddress">IP Address:</label>
+      <input
+        id="ipAddress"
+        type="text"
+        [(ngModel)]="newNode.ipAddress"
+        placeholder="Example: 192.168.1.100"
+        class="ip-input"
+      />
+
+      <label for="nodeType">Node Type:</label>
+      <select id="nodeType" [(ngModel)]="newNode.nodeType" class="node-type-select">
+        <option value="worker">Worker Node</option>
+        <option value="control-plane">Control Plane Node</option>
+      </select>
+
+      <button (click)="addNode()" class="add-button">Add Node</button>
+    </div>
+  </div>
+
+  <!-- Nodes Table -->
+  @if (nodes.length > 0) {
+    <div class="nodes-table-container">
+      <h3>Cluster Nodes</h3>
+      <table class="nodes-table">
+        <thead>
+          <tr>
+            <th>IP Address</th>
+            <th>Node Type</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (node of nodes; track node.id) {
+            <tr class="node-row">
+              <td>
+                @if (node.isEditing) {
+                  <input
+                    type="text"
+                    [(ngModel)]="node.ipAddress"
+                    class="edit-input"
+                  />
+                } @else {
+                  {{ node.ipAddress }}
+                }
+              </td>
+              <td>
+                @if (node.isEditing) {
+                  <select
+                    [(ngModel)]="node.nodeType"
+                    class="edit-select"
+                  >
+                    <option value="worker">Worker Node</option>
+                    <option value="control-plane">Control Plane Node</option>
+                  </select>
+                } @else {
+                  <span class="node-type" [class.worker]="node.nodeType === 'worker'" [class.control-plane]="node.nodeType === 'control-plane'">
+                    {{ node.nodeType === 'worker' ? 'Worker Node' : 'Control Plane Node' }}
+                  </span>
+                }
+              </td>
+              <td class="actions">
+                @if (node.isEditing) {
+                  <div>
+                    <button (click)="saveNode(node)" class="save-button">Save</button>
+                    <button (click)="cancelEdit(node)" class="cancel-button">Cancel</button>
+                  </div>
+                } @else {
+                  <button (click)="editNode(node)" class="edit-button">Edit</button>
+                  <button (click)="deleteNode(node.id)" class="delete-button">Delete</button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  @if (nodes.length === 0) {
+    <div class="empty-state">
+      <p>No cluster nodes configured yet. Add your first node above.</p>
+    </div>
+  }
+</div>
