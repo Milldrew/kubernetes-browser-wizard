@@ -1,4 +1,9 @@
-<main>
-  <wizard-wizard-ui></wizard-wizard-ui>
-  <wizard-terminal></wizard-terminal>
-</main>
+@if (coreState.hasClusterIpInfo) {
+  <main>
+    <wizard-wizard-ui></wizard-wizard-ui>
+    <wizard-terminal></wizard-terminal>
+  </main>
+  <button id="fab" mat-fab>
+    <mat-icon>account_tree</mat-icon>
+  </button>
+} @else {}
