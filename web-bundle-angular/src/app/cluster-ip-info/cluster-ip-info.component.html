@@ -151,7 +151,7 @@
                   />
                 } @else {
                   <span class="node-password">
-                    {{ node.password ? '••••••••' : '-' }}
+                    {{ node.password || '-' }}
                   </span>
                 }
               </td>
