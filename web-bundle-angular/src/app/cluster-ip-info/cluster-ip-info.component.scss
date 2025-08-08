@@ -34,7 +34,7 @@
       min-width: 80px;
     }
 
-    .ip-input {
+    .nickname-input, .ip-input {
       padding: 8px 12px;
       border: 1px solid #ced4da;
       border-radius: 4px;
@@ -124,6 +124,35 @@
             border-color: #007bff;
             box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
           }
+        }
+
+        .copyable-ip {
+          cursor: pointer;
+          padding: 4px 8px;
+          border-radius: 4px;
+          transition: all 0.2s ease;
+          display: inline-block;
+          font-family: 'Courier New', monospace;
+          font-weight: 500;
+          background: #f8f9fa;
+          border: 1px solid transparent;
+
+          &:hover {
+            background: #e9ecef;
+            border-color: #007bff;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0, 123, 255, 0.2);
+          }
+
+          &:active {
+            transform: translateY(0);
+          }
+        }
+
+        .node-nickname {
+          font-style: italic;
+          color: #6c757d;
+          font-size: 0.9em;
         }
 
         .node-type {

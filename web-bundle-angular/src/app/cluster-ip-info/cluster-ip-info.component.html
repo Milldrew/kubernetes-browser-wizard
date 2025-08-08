@@ -5,6 +5,15 @@
   <div class="add-node-form">
     <h3>Add New Node</h3>
     <div class="form-row">
+      <label for="nickname">Nickname (optional):</label>
+      <input
+        id="nickname"
+        type="text"
+        [(ngModel)]="newNode.nickname"
+        placeholder="e.g., master-01, worker-beta"
+        class="nickname-input"
+      />
+      
       <label for="ipAddress">IP Address:</label>
       <input
         id="ipAddress"
@@ -31,6 +40,7 @@
       <table class="nodes-table">
         <thead>
           <tr>
+            <th>Nickname</th>
             <th>IP Address</th>
             <th>Node Type</th>
             <th>Actions</th>
@@ -43,11 +53,31 @@
                 @if (node.isEditing) {
                   <input
                     type="text"
+                    [(ngModel)]="node.nickname"
+                    class="edit-input"
+                    placeholder="Nickname"
+                  />
+                } @else {
+                  <span class="node-nickname">
+                    {{ node.nickname || '-' }}
+                  </span>
+                }
+              </td>
+              <td>
+                @if (node.isEditing) {
+                  <input
+                    type="text"
                     [(ngModel)]="node.ipAddress"
                     class="edit-input"
                   />
                 } @else {
-                  {{ node.ipAddress }}
+                  <span 
+                    class="copyable-ip" 
+                    (click)="copyToClipboard(node.ipAddress, $event)"
+                    title="Click to copy IP address"
+                  >
+                    {{ node.ipAddress }}
+                  </span>
                 }
               </td>
               <td>

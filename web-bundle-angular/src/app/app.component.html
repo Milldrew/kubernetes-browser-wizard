@@ -3,12 +3,19 @@
     <wizard-wizard-ui></wizard-wizard-ui>
     <wizard-terminal></wizard-terminal>
   </main>
-  <button id="fab" mat-fab>
+  <button id="fab" mat-fab (click)="coreState.showClusterIpInfoNow()">
     <mat-icon>account_tree</mat-icon>
   </button>
 } @else {
   <wizard-cluster-ip-info></wizard-cluster-ip-info>
-  <button id="fab" mat-fab>
+  <button
+    id="fab"
+    class="go-to-terminal"
+    mat-fab
+    extended
+    (click)="coreState.showTerminal()"
+  >
+    Go to Terminal Wizard
     <mat-icon>terminal</mat-icon>
   </button>
 }
