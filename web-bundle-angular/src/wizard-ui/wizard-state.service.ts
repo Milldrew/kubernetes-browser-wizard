@@ -38,4 +38,19 @@ export class WizardState {
     return this.currentRecipe().slides[this.currentSlideIndex()];
   }
   currentSlide: Slide = this.getCurrentSlide();
+  handleNewRecipeSelected() {
+    console.log('new recipe selected');
+    console.log(this.currentRecipe);
+    console.log(this.currentRecipe());
+    const recipeName = this.currentRecipe();
+    const currentRecipe = this.recipes().find((recipe: any) => {
+      return recipe.recipeTitle === recipeName;
+    });
+    if (!currentRecipe) {
+      this.setCurrentRecipe(RECIPES[0]);
+      this.currentRecipe.set(RECIPES[0]);
+      return;
+    }
+    this.setCurrentRecipe(currentRecipe);
+  }
 }
