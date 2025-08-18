@@ -1,11 +1,15 @@
 const CONFIGURE_WIZARD = 'configure-wizard';
 const SETUP_CONTROL_PLANE_NODE = 'setup-control-plane-node';
 const ADD_WORKER_NODE = 'add-worker-node';
+const UPDATE_CLUSTER_VERSION = 'update-cluster-version';
+const AT_METAL_LOAD_BALANCER = 'add-metal-load-balancer';
 
 export type RecipeTitles =
   | typeof CONFIGURE_WIZARD
   | typeof SETUP_CONTROL_PLANE_NODE
-  | typeof ADD_WORKER_NODE;
+  | typeof ADD_WORKER_NODE
+  | typeof UPDATE_CLUSTER_VERSION
+  | typeof AT_METAL_LOAD_BALANCER;
 export type Slide = {
   /**
    * each slide has a command that can be ran automatically or edited and ran from the vim editor
@@ -201,6 +205,158 @@ sudo sysctl --system`,
       {
         explanation: `After you joined the worker node to the control plane, you can run the following command to check the status of the nodes in the cluster.`,
         command: `kubectl get nodes`,
+      },
+    ],
+  },
+  {
+    recipeTitle: UPDATE_CLUSTER_VERSION,
+    slides: [
+      {
+        command: `curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.XX/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg && echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.XX/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list`,
+        explanation: `Replace the XX with the version you want to update to (IMPORTANT: must be the next minor version 1.33 → 1.34), e.g., 1.38. To install the correct apt package manager  kubernetes docker repo to retrieve your binaries from`,
+      },
+      {
+        command: `sudo apt update && sudo apt-cache show kubeadm`,
+
+        explanation: `Update the package list and show available kubeadm versions. This will help you confirm the version you want to upgrade to. Copy the version you want to update to to your clipboard`,
+      },
+      {
+        command: `sudo apt-get update && sudo apt-get install -y kubeadm=1.XX.X-X.X`,
+        explanation: `Use the version copied to your clipbard to install the next minor version of kubeadm from your new repo`,
+      },
+      {
+        command: `sudo kubeadm upgrade apply v1.XX.X`,
+        explanation: `Apply the upgrade to your Kubernetes cluster. Importantly make sure to use the right version number format and omit the extra suffixed numbers.`,
+      },
+      {
+        command: `sudo apt install -y --allow-change-held-packages kubelet=1.XX.X-0 kubectl=1.XX.X-0`,
+        explanation: `Install the updated kubelet and kubectl versions to match the kubeadm version you just upgraded to.`,
+      },
+      {
+        command: `sudo systemctl restart kubelet`,
+        explanation: `Restart the kubelet service to apply changes.`,
+      },
+
+      {
+        explanation: `For each worker node complete the follwowing steps`,
+        command: '',
+      },
+      {
+        command: `curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.XX/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg && echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.XX/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list`,
+        explanation: `Replace the XX with the version you want to update to (IMPORTANT: must be the next minor version 1.33 → 1.34), e.g., 1.38. To install the correct apt package manager  kubernetes docker repo to retrieve your binaries from`,
+      },
+      {
+        command: `sudo apt update && sudo apt-cache show kubeadm`,
+
+        explanation: `Update the package list and show available kubeadm versions. This will help you confirm the version you want to upgrade to. Copy the version you want to update to to your clipboard`,
+      },
+      {
+        command: `sudo apt-get update && sudo apt-get install -y --allow-change-held-packages kubeadm=1.XX.X-X.X`,
+        explanation: `Use the version copied to your clipbard to install the next minor version of kubeadm from your new repo`,
+      },
+      {
+        command: `sudo kubeadm upgrade node`,
+        explanation: `Apply the upgrade to your Kubernetes worker node. Importantly make sure to use the right version number format and omit the extra suffixed numbers.`,
+      },
+      {
+        command: `sudo apt install -y --allow-change-held-packages kubelet=1.XX.X-0 kubectl=1.XX.X-0`,
+        explanation: `Install the updated kubelet and kubectl versions to match the kubeadm version you just upgraded to.`,
+      },
+      {
+        command: `sudo systemctl restart kubelet`,
+        explanation: `Restart the kubelet service to apply changes.`,
+      },
+    ],
+  },
+  {
+    recipeTitle: AT_METAL_LOAD_BALANCER,
+    slides: [
+      {
+        explanation: `This video has a good walk through explanation for installing matallb with ingress`,
+        command: `https://www.youtube.com/watch?v=k8bxtsWe9qw`
+
+
+      }
+      {
+        explanation: `Change the load balancing mode to ipvs (ip virtual server) instead of ip tables for better performance and to support metallb.
+
+          apiVersion: kubeproxy.config.k8s.io/v1alpha1
+kind: KubeProxyConfiguration
+mode: "ipvs"
+ipvs:
+  strictARP: true
+          `,
+        command: `kubectl edit configmap kube-proxy -n kube-system`,
+      },
+      {
+        explanation: `Apply changes by restarting kube-proxy`,
+        command: `kubectl rollout restart daemonset kube-proxy -n kube-system`,
+      },
+      {
+        explanation: `Install the metallb kubernetes manifests`,
+        command: `kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.15.2/config/manifests/metallb-native.yaml`,
+      },
+      {
+        explanation: `Add the metallb custom resources IPAddressPool and L2Advertisement to your cluster. This is necessary to configure the IP address pool that metallb will use for load balancing.`,
+        command: `apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: default-pool
+  namespace: metallb-system
+spec:
+  addresses:
+  - <first-ip>-<last-ip> # Adjust to your network range
+---
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  name: default-l2advertisement
+  namespace: metallb-system
+spec:
+  ipAddressPools:
+  - default-pool`,
+      },
+      {
+        explanation: `Check the ip adresses range your router is using and assign a seperate range to your load balancer. You may also want to check your kubernetes cidr block kubectl get nodes -o jsonpath='{.items[*].spec.podCIDR}' to make sure there's no overlaps`,
+        command: `apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: metallb-system
+  name: config
+data:
+  config: |
+    address-pools:
+    - name: default
+      protocol: layer2
+      addresses:
+      - <first-ip>-<last-ip>`,
+      },
+      {
+        explanation: `Apply the configmap to your cluster`,
+        command: `kubectl apply -f <path-to-configmap>.yaml`,
+      },
+      {
+        explanation: `Create a LoadBalancer service to test metallb`,
+        command: `apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+spec:
+  selector:
+    app: nginx
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: LoadBalancer`,
+      },
+      {
+        explanation: `Apply the service to your cluster`,
+        command: `kubectl apply -f <path-to-service>.yaml`,
+      },
+      {
+        explanation: `Check the status of the service to see if it has been assigned an external IP address by metallb`,
+        command: `kubectl get svc nginx-service`,
       },
     ],
   },

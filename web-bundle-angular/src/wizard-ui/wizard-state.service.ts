@@ -52,5 +52,6 @@ export class WizardState {
       return;
     }
     this.setCurrentRecipe(currentRecipe);
+    this.currentSlide = this.getCurrentSlide();
   }
 }
