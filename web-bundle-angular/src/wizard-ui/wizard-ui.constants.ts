@@ -273,10 +273,8 @@ sudo sysctl --system`,
     slides: [
       {
         explanation: `This video has a good walk through explanation for installing matallb with ingress`,
-        command: `https://www.youtube.com/watch?v=k8bxtsWe9qw`
-
-
-      }
+        command: `https://www.youtube.com/watch?v=k8bxtsWe9qw`,
+      },
       {
         explanation: `Change the load balancing mode to ipvs (ip virtual server) instead of ip tables for better performance and to support metallb.
 
