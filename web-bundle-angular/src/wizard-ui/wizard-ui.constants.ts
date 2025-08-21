@@ -1,15 +1,20 @@
+import { SETUP_CONTAINER_REGISTRY_RECIPE } from './setup-container-registry.recipe';
+
 const CONFIGURE_WIZARD = 'configure-wizard';
 const SETUP_CONTROL_PLANE_NODE = 'setup-control-plane-node';
 const ADD_WORKER_NODE = 'add-worker-node';
 const UPDATE_CLUSTER_VERSION = 'update-cluster-version';
 const AT_METAL_LOAD_BALANCER = 'add-metal-load-balancer';
+export const SETUP_LOCAL_CLUSTER_CONTAINER_REGISTRY =
+  'setup-local-cluster-container-registry';
 
 export type RecipeTitles =
   | typeof CONFIGURE_WIZARD
   | typeof SETUP_CONTROL_PLANE_NODE
   | typeof ADD_WORKER_NODE
   | typeof UPDATE_CLUSTER_VERSION
-  | typeof AT_METAL_LOAD_BALANCER;
+  | typeof AT_METAL_LOAD_BALANCER
+  | typeof SETUP_LOCAL_CLUSTER_CONTAINER_REGISTRY;
 export type Slide = {
   /**
    * each slide has a command that can be ran automatically or edited and ran from the vim editor
@@ -28,6 +33,7 @@ export type Recipe = {
 export const RECIPE_TITLES: RecipeTitles[] = [CONFIGURE_WIZARD];
 
 export const RECIPES: Recipe[] = [
+  SETUP_CONTAINER_REGISTRY_RECIPE,
   {
     recipeTitle: SETUP_CONTROL_PLANE_NODE,
     slides: [
