@@ -1,4 +1,5 @@
 import { SETUP_CONTAINER_REGISTRY_RECIPE } from './setup-container-registry.recipe';
+import { ISSUE_A_KUBECONFIG_FILE_RECIPE } from './issue-a-kubeconfig-file.recipe';
 
 const CONFIGURE_WIZARD = 'configure-wizard';
 const SETUP_CONTROL_PLANE_NODE = 'setup-control-plane-node';
@@ -14,7 +15,8 @@ export type RecipeTitles =
   | typeof ADD_WORKER_NODE
   | typeof UPDATE_CLUSTER_VERSION
   | typeof AT_METAL_LOAD_BALANCER
-  | typeof SETUP_LOCAL_CLUSTER_CONTAINER_REGISTRY;
+  | typeof SETUP_LOCAL_CLUSTER_CONTAINER_REGISTRY
+  | typeof ISSUE_A_KUBECONFIG_FILE_RECIPE;
 export type Slide = {
   /**
    * each slide has a command that can be ran automatically or edited and ran from the vim editor
