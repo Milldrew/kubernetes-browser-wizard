@@ -1,6 +1,9 @@
 import { Injectable, signal } from '@angular/core';
 import { RECIPES, Recipe, Slide } from './wizard-ui.constants';
 
+/**
+ * wizard state
+ */
 @Injectable({
   providedIn: 'root',
 })
@@ -9,6 +12,9 @@ export class WizardState {
   setCurrentRecipe(recipe: Recipe) {
     this.currentRecipe.set(recipe);
     this.resetCurrentSlideIndex();
+  }
+  constructor() {
+    console.log(this.currentRecipe());
   }
   currentSlideIndex = signal<number>(0);
   isFirstSlide = () => !this.currentSlideIndex();
